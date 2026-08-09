@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   try {
     checkReferer(req);
   } catch (e) {
-    console.error('[vote/info] Forbidden referer:', e.message);
+    console.error('[vote/update] Forbidden referer:', e.message);
     return res.status(403).json({ error: 'Forbidden Referer' });
   }
   Object.entries(headers).forEach(([k, v]) => res.setHeader(k, v));

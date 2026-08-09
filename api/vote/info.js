@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { checkReferer, headers } from '../_utils.js';
+import { checkReferer, getVote, headers } from '../_utils.js';
 
 export default async function handler(req, res) {
   try {
@@ -14,20 +13,9 @@ export default async function handler(req, res) {
   const { id } = req.query;
   if (!id) return res.status(400).json({ error: 'Missing id' });
 
-  const SERVER_URL = process.env.LEANCLOUD_SERVER_URL;
-  const HEADERS = {
-    'X-LC-Id': process.env.LEANCLOUD_APP_ID,
-    'X-LC-Key': process.env.LEANCLOUD_APP_KEY,
-    'User-Agent': 'Mozilla/5.0 (Feedback-App)',
-    'Accept': 'application/json'
-  };
-
   try {
-    const query = encodeURIComponent(JSON.stringify({ id }));
-    const url = `${SERVER_URL}/1.1/classes/Vote?where=${query}`;
-    const response = await axios.get(url, { headers: HEADERS });
-    const data = response.data.results[0] || {};
-    res.json({ votes: data });
+    const votes = await getVote(id);
+    res.json({ votes });
   } catch (e) {
     console.error('[vote/info] ERROR:', e.response?.data || e.message);
     res.status(500).json({ error: 'Internal server error' });
